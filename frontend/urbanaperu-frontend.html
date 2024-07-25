@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UrbanaPeru - Bienes Raíces</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 1em;
+        }
+        h1 {
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2em auto;
+            padding: 1em;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 1em;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+        select, input[type="number"], input[type="tel"], input[type="text"] {
+            width: 100%;
+            padding: 0.5em;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        #search-button {
+            padding: 0.5em 1em;
+            font-size: 1em;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            width: 100%;
+        }
+        #search-button:hover {
+            background-color: #2980b9;
+        }
+        #results {
+            margin-top: 1em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Urbana Peru</h1>
+    </header>
+    <div class="container">
+        <form id="search-form">
+            <div class="form-group">
+                <label for="property-type">¿Qué estás buscando?</label>
+                <select id="property-type" required>
+                    <option value="">Selecciona una opción</option>
+                    <option value="casa">Casa</option>
+                    <option value="apartamento">Apartamento</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="bedrooms">¿Cuántas habitaciones?</label>
+                <input type="number" id="bedrooms" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="bathrooms">¿Cuántos baños?</label>
+                <input type="number" id="bathrooms" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Tu número de teléfono:</label>
+                <input type="tel" id="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="location">¿En qué zona estás buscando?</label>
+                <input type="text" id="location" placeholder="Ej: Miraflores, Lima" required>
+            </div>
+            <button type="submit" id="search-button">Buscar</button>
+        </form>
+        <div id="results"></div>
+    </div>
+    <script>
+        document.getElementById('search-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var propertyType = document.getElementById('property-type').value;
+            var bedrooms = document.getElementById('bedrooms').value;
+            var bathrooms = document.getElementById('bathrooms').value;
+            var phone = document.getElementById('phone').value;
+            var location = document.getElementById('location').value;
+
+            fetch('/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    propertyType: propertyType,
+                    bedrooms: bedrooms,
+                    bathrooms: bathrooms,
+                    phone: phone,
+                    location: location
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('results').innerHTML = data.result;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
